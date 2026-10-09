@@ -1,0 +1,6 @@
+{
+  "appId":"com.tritech.photobooth",
+  "appName":"Tritech Photobooth",
+  "webDir":"out",
+  "server":{"androidScheme":"https"}
+}

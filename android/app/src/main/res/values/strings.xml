@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Tritech Photobooth</string>
+    <string name="title_activity_main">Tritech Photobooth</string>
+    <string name="package_name">com.tritech.photobooth</string>
+    <string name="custom_url_scheme">com.tritech.photobooth</string>
+</resources>
