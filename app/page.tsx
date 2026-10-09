@@ -1,2 +1,6 @@
+"use client";
 import Photobooth from "./photobooth";
-export default function Page(){return <Photobooth/>}
+
+export default function Page() {
+  return <Photobooth />;
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Tritech Photobooth",
+  "description": "Aplikasi photobooth digital SMK Tritech Jurusan Edition (RPL, DKV, TKJ) dengan kamera 4 foto, custom frame dan filter, photostrip generator, dan galeri kenangan.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
