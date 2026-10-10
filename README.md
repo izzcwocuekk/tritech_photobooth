@@ -11,6 +11,16 @@ npm run dev
 
 Open `http://localhost:3000` or the network URL shown by Next.js. Camera access requires a secure origin (HTTPS or localhost).
 
+## Laragon
+
+Run `npm run build` once. Keep the project inside `C:\laragon\www\tritech_photobooth`, start Apache from Laragon, then open:
+
+```text
+http://tritech_photobooth.test
+```
+
+The root `.htaccess` routes Apache to the static export in `out/`. If the `.test` address is not available, use `http://localhost/tritech_photobooth` or enable Laragon Auto Virtual Hosts and restart Apache.
+
 ## Photo modes
 
 - Solo, Duo, Photostrip, and Kolase layouts

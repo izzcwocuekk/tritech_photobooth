@@ -1,0 +1,10 @@
+RewriteEngine On
+
+# Serve the static Next export generated in /out.
+RewriteRule ^$ out/index.html [L]
+
+# Avoid rewriting an already mapped export path.
+RewriteRule ^out/ - [L]
+
+# Route exported pages, JavaScript, CSS, and static files through /out.
+RewriteRule ^(.+)$ out/$1 [L]
