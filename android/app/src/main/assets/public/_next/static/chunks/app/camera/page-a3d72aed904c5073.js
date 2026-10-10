@@ -1,0 +1,1 @@
+(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[36],{3551:(e,s,a)=>{Promise.resolve().then(a.bind(a,7360))},7360:(e,s,a)=>{"use strict";a.r(s),a.d(s,{default:()=>t});var n=a(5155),r=a(4455);function t(){return(0,n.jsx)(r.default,{initial:"camera"})}}},e=>{e.O(0,[455,441,255,358],()=>e(e.s=3551)),_N_E=e.O()}]);
