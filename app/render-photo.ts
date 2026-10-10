@@ -1,4 +1,4 @@
-import { getLayout, getMajor, type FilterId, type FrameId, type LayoutId, type MajorId, type PaperId } from "./studio";
+import { getLayout, getMajor, type BucinStyle, type FilterId, type FrameId, type LayoutId, type MajorId, type PaperId } from "./studio";
 
 export type RenderOptions = {
   photos: string[];
@@ -8,6 +8,11 @@ export type RenderOptions = {
   frame: FrameId;
   filter: FilterId;
   date: Date;
+  bucinStyle?: BucinStyle;
+  coupleA?: string;
+  coupleB?: string;
+  loveNote?: string;
+  className?: string;
 };
 
 const font = (size: number, weight = 700) => `${weight} ${size}px Arial, sans-serif`;
@@ -35,11 +40,22 @@ function colorFilter(filter: FilterId) {
   return { original: "none", mono: "grayscale(1) contrast(1.08)", warm: "sepia(.34) saturate(1.15)", cool: "saturate(.9) hue-rotate(12deg)", soft: "contrast(.89) brightness(1.1) saturate(.94)" }[filter];
 }
 
+function frameColors(frame: FrameId) {
+  return {
+    cotton: { accent: "#ef8caf", ink: "#7e3156", decoration: "♥" },
+    blue: { accent: "#8db9ef", ink: "#244875", decoration: "✦" },
+    midnight: { accent: "#d9dceb", ink: "#f7f8ff", decoration: "·" },
+    lavender: { accent: "#b19ae7", ink: "#5d477f", decoration: "✧" },
+  }[frame];
+}
+
 export async function renderPhoto(options: RenderOptions): Promise<Blob> {
   const layout = getLayout(options.layout);
   if (options.photos.length !== layout.count) throw new Error(`Format ${layout.title} memerlukan ${layout.count} foto.`);
   const images = await Promise.all(options.photos.map(loadImage));
   const major = getMajor(options.major);
+  const frameColorset = frameColors(options.frame);
+  const bucin = options.bucinStyle && options.bucinStyle !== "none";
   const canvas = document.createElement("canvas");
   canvas.width = 1080;
   canvas.height = options.layout === "strip" ? 1920 : 1350;
@@ -47,7 +63,7 @@ export async function renderPhoto(options: RenderOptions): Promise<Blob> {
   if (!ctx) throw new Error("Canvas tidak tersedia pada perangkat ini.");
   const height = canvas.height;
 
-  if (options.paper === "midnight") {
+  if (options.paper === "midnight" || options.frame === "midnight") {
     ctx.fillStyle = major.dark; ctx.fillRect(0, 0, 1080, height);
   } else if (options.paper === "confetti") {
     ctx.fillStyle = major.light; ctx.fillRect(0, 0, 1080, height);
@@ -58,15 +74,15 @@ export async function renderPhoto(options: RenderOptions): Promise<Blob> {
     }
   } else {
     ctx.fillStyle = "#f8f4eb"; ctx.fillRect(0, 0, 1080, height);
-    ctx.fillStyle = major.color; ctx.fillRect(0, 0, 28, height);
+    ctx.fillStyle = frameColorset.accent; ctx.fillRect(0, 0, 28, height);
     ctx.globalAlpha = .07; ctx.fillStyle = major.dark;
     for (let x = 48; x < 1080; x += 30) for (let y = 20; y < height; y += 30) { ctx.beginPath(); ctx.arc(x, y, 1.7, 0, Math.PI * 2); ctx.fill(); }
     ctx.globalAlpha = 1;
   }
 
-  const dark = options.paper === "midnight";
+  const dark = options.paper === "midnight" || options.frame === "midnight";
   ctx.textBaseline = "middle";
-  ctx.fillStyle = dark ? "#ffffff" : major.dark;
+  ctx.fillStyle = dark ? "#ffffff" : frameColorset.ink;
   ctx.textAlign = "left";
   ctx.font = font(50, 900);
   ctx.fillText("TRITECH", 82, 78);
@@ -75,6 +91,18 @@ export async function renderPhoto(options: RenderOptions): Promise<Blob> {
   ctx.textAlign = "right";
   ctx.font = font(30, 900);
   ctx.fillText(major.code, 998, 82);
+  if (bucin) {
+    ctx.textAlign = "center";
+    ctx.fillStyle = options.paper === "midnight" ? "#ffd6e5" : "#bd3e6d";
+    ctx.font = font(22, 800);
+    ctx.fillText("♡  OUR LITTLE MEMORY  ♡", 540, 145);
+  }
+  ctx.textAlign = "left";
+  ctx.fillStyle = dark ? "#ffffff" : frameColorset.accent;
+  ctx.font = font(28, 900);
+  ctx.fillText(frameColorset.decoration, 47, 75);
+  ctx.textAlign = "right";
+  ctx.fillText(frameColorset.decoration, 1033, 75);
 
   const rects: Array<[number, number, number, number]> = options.layout === "strip"
     ? [[80, 164, 920, 360], [80, 548, 920, 360], [80, 932, 920, 360], [80, 1316, 920, 360]]
@@ -86,33 +114,50 @@ export async function renderPhoto(options: RenderOptions): Promise<Blob> {
 
   rects.forEach(([x, y, w, h], index) => {
     ctx.save();
-    ctx.fillStyle = dark ? "#ffffff" : major.dark;
-    rounded(ctx, x - 7, y - 7, w + 14, h + 14, options.frame === "classic" ? 9 : 22);
+    ctx.fillStyle = dark ? "#ffffff" : frameColorset.accent;
+    rounded(ctx, x - 7, y - 7, w + 14, h + 14, options.frame === "midnight" ? 7 : 22);
     ctx.fill();
-    rounded(ctx, x, y, w, h, options.frame === "classic" ? 3 : 16);
+    rounded(ctx, x, y, w, h, options.frame === "midnight" ? 3 : 16);
     ctx.clip();
     ctx.filter = colorFilter(options.filter);
     drawCover(ctx, images[index], x, y, w, h);
     ctx.restore();
-    if (options.frame === "ticket") {
+    if (options.frame === "blue" || options.frame === "lavender") {
       ctx.save(); ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 5; ctx.setLineDash([14, 12]);
       rounded(ctx, x + 20, y + 20, w - 40, h - 40, 9); ctx.stroke(); ctx.restore();
     }
-    if (options.frame === "sticker") {
-      ctx.save(); ctx.fillStyle = major.color; ctx.translate(x + w - 42, y + 40); ctx.rotate(.15);
+    if (options.frame === "cotton" || options.frame === "lavender") {
+      ctx.save(); ctx.fillStyle = frameColorset.accent; ctx.translate(x + w - 42, y + 40); ctx.rotate(.15);
       rounded(ctx, -64, -25, 128, 50, 12); ctx.fill();
-      ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.font = font(22, 900); ctx.fillText(`${index + 1} / ${rects.length}`, 0, 2); ctx.restore();
+      ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.font = font(22, 900); ctx.fillText(options.frame === "cotton" ? "♥" : "✧", 0, 2); ctx.restore();
     }
   });
 
   const footerY = height - 129;
-  ctx.fillStyle = dark ? "#ffffff" : major.dark;
+  ctx.fillStyle = dark ? "#ffffff" : frameColorset.ink;
   ctx.textAlign = "left"; ctx.font = font(44, 900); ctx.fillText("MAKE IT A MEMORY.", 82, footerY);
   ctx.font = font(25, 700); ctx.fillText(major.name.toUpperCase(), 84, footerY + 49);
+  if (options.className?.trim()) {
+    ctx.font = font(21, 600);
+    ctx.fillText(`KELAS ${options.className.trim().slice(0, 18).toUpperCase()}`, 84, footerY + 81);
+  }
   ctx.textAlign = "right"; ctx.font = font(25, 700);
   ctx.fillText(new Intl.DateTimeFormat("id-ID", { day: "2-digit", month: "short", year: "numeric" }).format(options.date), 997, footerY + 48);
-  if (options.frame === "ticket") {
-    ctx.save(); ctx.strokeStyle = dark ? "#ffffff" : major.dark; ctx.lineWidth = 3; ctx.setLineDash([13, 10]);
+  if (bucin) {
+    ctx.textAlign = "center";
+    ctx.fillStyle = dark ? "#ffd6e5" : "#bd3e6d";
+    ctx.font = font(26, 800);
+    const names = [options.coupleA?.trim(), options.coupleB?.trim()].filter(Boolean).join("  ×  ");
+    if (names) ctx.fillText(names, 540, footerY - 28);
+    if (options.loveNote?.trim()) {
+      ctx.font = font(21, 600);
+      ctx.fillText(`“${options.loveNote.trim().slice(0, 58)}”`, 540, footerY + 82);
+    }
+    ctx.font = font(28, 900);
+    ctx.fillText("♥", 540, height - 24);
+  }
+  if (options.frame === "midnight") {
+    ctx.save(); ctx.strokeStyle = dark ? "#ffffff" : frameColorset.accent; ctx.lineWidth = 3; ctx.setLineDash([13, 10]);
     ctx.beginPath(); ctx.moveTo(82, footerY - 48); ctx.lineTo(998, footerY - 48); ctx.stroke(); ctx.restore();
   }
 

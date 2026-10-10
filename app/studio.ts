@@ -2,8 +2,9 @@ export type MajorId = "rpl" | "dkv" | "tkj";
 export type LayoutId = "solo" | "duo" | "strip" | "grid";
 export type CaptureId = "manual" | "auto";
 export type PaperId = "signature" | "confetti" | "midnight";
-export type FrameId = "classic" | "ticket" | "sticker";
+export type FrameId = "cotton" | "blue" | "midnight" | "lavender";
 export type FilterId = "original" | "mono" | "warm" | "cool" | "soft";
+export type BucinStyle = "none" | "love" | "date" | "letter";
 
 export const majors = [
   { id: "rpl", code: "RPL", name: "Rekayasa Perangkat Lunak", line: "For the ones who build what comes next.", color: "#2255dc", light: "#e3ebff", dark: "#11286e", symbol: "</>" },
@@ -25,9 +26,10 @@ export const papers = [
 ] as const;
 
 export const frames = [
-  { id: "classic", label: "Classic" },
-  { id: "ticket", label: "Ticket" },
-  { id: "sticker", label: "Sticker" },
+  { id: "cotton", label: "Cotton Candy" },
+  { id: "blue", label: "Blue Dream" },
+  { id: "midnight", label: "Midnight" },
+  { id: "lavender", label: "Lavender Pop" },
 ] as const;
 
 export const filters = [
