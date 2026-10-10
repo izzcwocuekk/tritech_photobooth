@@ -6,5 +6,10 @@ RewriteRule ^$ out/index.html [L]
 # Avoid rewriting an already mapped export path.
 RewriteRule ^out/ - [L]
 
+# Next static assets must also resolve when this app is opened from
+# localhost/tritech_photobooth/ or from a virtual-host subpath.
+RewriteRule ^(?:[^/]+/)?_next/(.*)$ out/_next/$1 [L]
+RewriteRule ^(?:[^/]+/)?manifest\.json$ out/manifest.json [L]
+
 # Route exported pages, JavaScript, CSS, and static files through /out.
 RewriteRule ^(.+)$ out/$1 [L]

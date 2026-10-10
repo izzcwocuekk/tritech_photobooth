@@ -1,2 +1,2 @@
-const nextConfig = { reactStrictMode: true, output: 'export', trailingSlash: true, images: { unoptimized: true } };
+const nextConfig = { reactStrictMode: true, output: 'export', trailingSlash: true, assetPrefix: './', images: { unoptimized: true } };
 export default nextConfig;
